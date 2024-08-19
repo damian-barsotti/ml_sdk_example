@@ -1,0 +1,12 @@
+{
+    "enabled": {
+        "version": "unique",
+        "scores": null
+    },
+    "availables": [
+        {
+            "version": "unique",
+            "scores": null
+        }
+    ]
+}

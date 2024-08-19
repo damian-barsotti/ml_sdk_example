@@ -1,0 +1,59 @@
+services:
+  acl_imdb_api:
+    image: ml_api:acl_imdb
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    networks:
+      - platform
+      - internal
+    volumes:
+      - ./volumes/users:/app/users
+    ports:
+      - "80:80"
+    tty: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.acl_imdb.loadbalancer.server.port=80"
+      - "traefik.http.routers.acl_imdb.rule=Host(`acl_imdb.localhost`)"
+      - "traefik.http.routers.acl_imdb.entrypoints=web"
+
+  acl_imdb:
+    image: acl_imdb
+    build:
+      context: ./acl_imdb
+      dockerfile: ./Dockerfile
+    networks:
+      - internal
+    volumes:
+      - ./volumes/models:/app/models
+    tty: true
+
+  redis:
+    image: redis:7.2.4
+    networks:
+      - internal
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  # mongo:
+  #   image: mongo:7.0.9
+  #   volumes:
+  #     - ./mongo_data:/data/db
+  #   networks:
+  #     - internal
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "10"
+        
+networks:
+  internal:
+  platform:
+    external: true

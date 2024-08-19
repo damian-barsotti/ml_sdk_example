@@ -1,0 +1,70 @@
+services:
+  acl_imdb_api:
+    image: ml_api:acl_imdb
+    build:
+      context: ./
+      dockerfile: ./api/Dockerfile-dev
+    networks:
+      - platform
+      - internal
+    volumes:
+      - ./volumes/users:/app/users
+    ports:
+      - "80:80"
+    tty: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.acl_imdb.loadbalancer.server.port=80"
+      - "traefik.http.routers.acl_imdb.rule=Host(`acl_imdb.localhost`)"
+      - "traefik.http.routers.acl_imdb.entrypoints=web"
+
+  acl_imdb:
+    image: acl_imdb
+    build:
+      context: ./
+      dockerfile: ./acl_imdb/Dockerfile-dev
+    networks:
+      - internal
+    volumes:
+      - ./volumes/models:/app/models
+    tty: true
+
+  redis:
+    image: redis:7.2.4
+    networks:
+      - internal
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  # mongo:
+  #   image: mongo:7.0.9
+  #   volumes:
+  #     - ./mongo_data:/data/db
+  #   networks:
+  #     - internal
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "10"
+
+  locust:
+    image: locustio/locust:2.28.0
+    networks:
+      - platform
+      - internal
+    volumes:
+      - ./stress_test:/mnt/locust/stress_test
+    ports:
+      - "8089:8089"
+    command: -f /mnt/locust/stress_test/locustfile.py -H http://acl_imdb_api
+
+networks:
+  internal:
+  platform:
+    external: true

@@ -1,0 +1,15 @@
+FROM python:3.11
+
+COPY ./api/app /app
+RUN pip3 install -r /app/requirements.txt
+
+EXPOSE 80
+
+# Install SDK
+COPY ./ml_sdk /tmp/ml_sdk
+RUN pip3 install 'ml_sdk[api] @ file:///tmp/ml_sdk#egg=ml_sdk'
+RUN rm -rf /tmp/ml_sdk
+
+WORKDIR /app
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]

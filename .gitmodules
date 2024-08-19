@@ -1,0 +1,3 @@
+[submodule "ml_sdk"]
+	path = ml_sdk
+	url = https://github.com/damian-barsotti/ml_sdk.git

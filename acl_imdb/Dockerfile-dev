@@ -1,0 +1,16 @@
+FROM python:3.11
+
+# Builds with conexts ../
+COPY ./acl_imdb/app /app/
+RUN pip3 install -r /app/requirements.txt
+
+# Install SDK
+COPY ./ml_sdk /tmp/ml_sdk
+RUN pip3 install file:///tmp/ml_sdk#egg=ml_sdk
+RUN rm -rf /tmp/ml_sdk
+
+#RUN pip3 install git+https://github.com/damian-barsotti/ml_sdk@test#egg=ml_sdk
+
+WORKDIR /app
+
+CMD ["python", "service.py", "-m", "Serve"]
