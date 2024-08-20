@@ -6,9 +6,8 @@ RUN pip3 install -r /app/requirements.txt
 EXPOSE 80
 
 # Install SDK
-COPY ./ml_sdk /tmp/ml_sdk
-RUN pip3 install 'ml_sdk[api] @ file:///tmp/ml_sdk#egg=ml_sdk'
-RUN rm -rf /tmp/ml_sdk
+RUN --mount=type=bind,source=./ml_sdk,target=/tmp/ml_sdk,rw\
+    pip3 install 'ml_sdk[api] @ file:///tmp/ml_sdk#egg=ml_sdk'
 
 WORKDIR /app
 
