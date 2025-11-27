@@ -72,13 +72,11 @@ Documentation available in [http://localhost/redoc]()
 Please fork from this repo and follow the steps
 0) create a new folder copying from `./acl_imdb` folder as a template.
 
-1) add your binary data to bin folder `./<your_new_folder>/requirements.txt`
+1) add your dependencies in `./<your_new_folder>/app/requirements.txt`
 
 2) add your samples for train/test input in `./<your_new_folder>/samples`
 
-3) add your dependencies in `./<your_new_folder>/requirements.txt`
-
-4) modify `./<your_new_folder>/service.py` file adding your customizations for the model just inheriting from `MLServiceInterface`
+4) modify `./<your_new_folder>/app/service.py` file adding your customizations for the model just inheriting from `MLServiceInterface`
 ```python
 from ml_sdk.service import MLServiceInterface
 from ml_sdk.io.version import ModelVersion
